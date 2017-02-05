@@ -15,6 +15,13 @@ import android.view.SurfaceView;
 import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.CursorAnchorInfo;
 import android.widget.Toast;
+//////////////////////////////////////////
+import android.os.SystemClock;
+import android.os.Handler;
+import android.widget.TextView;
+
+import java.util.ArrayList;
+////////////////////////////////////////////
 
 import java.util.ArrayList;
 
@@ -30,12 +37,21 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
     public void setAvgFPS(String avgFPS) {
         this.avgFPS = avgFPS;
     }
+    //////////////////////////////////
+    long MillisecondTime, StartTime, TimeBuff, UpdateTime = 0L ;
 
+    Handler handler;
+
+    int Seconds, Minutes, MilliSeconds ;
+    TextView textView ;
+private int x=0;
+    //////////////////////////////////
     private MainThread thread;
     private Ball ball;
     private ArrayList<MovingBall> movingBallArrayList;
 
-    private int numberOfBalls = 5;
+    private int numberOfBalls = 3;
+    private int velocity= 20;
 
     Context context;
 
@@ -56,10 +72,14 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
     public void surfaceCreated(SurfaceHolder holder) {
         ball = new Ball(getBitmap(R.drawable.ball4),50,50);
         for(int i=0;i<numberOfBalls;i++){
-            MovingBall movingBall = new MovingBall(getBitmap(R.drawable.ball5),20,getHeight()/2,getWidth(),getHeight());
+            MovingBall movingBall = new MovingBall(getBitmap(R.drawable.ball5),20,getHeight()/2,getWidth(),getHeight(),velocity   );
             movingBallArrayList.add(movingBall);
         }
         thread.setRunning(true);
+        ////////////////////////////////////////
+        StartTime = SystemClock.uptimeMillis();
+        //handler.postDelayed(runnable, 0);
+        ////////////////////////////////////
         thread.start();
 
     }
@@ -133,11 +153,12 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
             //System.out.println(getWidth());
             for(int i=0;i<movingBallArrayList.size();i++) {
                 if (!checkCollision(movingBallArrayList.get(i))) {
+                    movingBallArrayList.get(i).setVelocity(velocity);
                     movingBallArrayList.get(i).move();
                 }
                 movingBallArrayList.get(i).draw(canvas);
             }
-            displayFps(canvas, avgFPS);
+          //  displayFps(canvas, avgFPS);
         }
     }
 
@@ -174,4 +195,62 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
     private float getDistance(int x1,int y1, int x2, int y2){
         return (float)Math.sqrt(Math.pow(x1-x2,2)+ Math.pow(y1-y2,2));
     }
+    ///////////////////////////////////////////////////
+    public void currentTime(Canvas canvas){
+        if(canvas!=null) {
+            boolean change = false;
+            //canvas.drawColor(Color.BLACK);
+            //ball.draw(canvas);
+            //System.out.println(getWidth());
+            MillisecondTime = SystemClock.uptimeMillis() - StartTime;
+
+            UpdateTime = TimeBuff + MillisecondTime;
+
+            Seconds = (int) (UpdateTime / 1000);
+
+            if(Seconds/5-x!=0)velocity = velocity+1;
+            x=Seconds/5;
+            Minutes = Seconds / 60;
+
+            Seconds = Seconds % 60;
+
+            MilliSeconds = (int) (UpdateTime % 1000);
+
+            displayTime(canvas, "" + Minutes + ":"
+                    + String.format("%02d", Seconds) + ":"
+                    + String.format("%03d", MilliSeconds));
+        }
+    }
+    private void displayTime(Canvas canvas, String time){
+        if(canvas != null /*&& time != null*/){
+            Paint paint = new Paint();
+            paint.setARGB(255,255,255,255);
+            paint.setTextSize(50);
+            canvas.drawText(time, this.getWidth() - 220, 70, paint);
+        }
+    }
+   /* public Runnable runnable = new Runnable() {
+
+        public void run() {
+
+            MillisecondTime = SystemClock.uptimeMillis() - StartTime;
+
+            UpdateTime = TimeBuff + MillisecondTime;
+
+            Seconds = (int) (UpdateTime / 1000);
+
+            Minutes = Seconds / 60;
+
+            Seconds = Seconds % 60;
+
+            MilliSeconds = (int) (UpdateTime % 1000);
+            displayTime(canvas, "" + Minutes + ":"
+                    + String.format("%02d", Seconds) + ":"
+                    + String.format("%03d", MilliSeconds));
+
+
+            handler.postDelayed(this, 0);
+        }
+
+    };*/
 }
