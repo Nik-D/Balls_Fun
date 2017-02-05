@@ -44,7 +44,7 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 
     int Seconds, Minutes, MilliSeconds ;
     TextView textView ;
-private int x=0;
+    private int x=0,y=0;
     //////////////////////////////////
     private MainThread thread;
     private Ball ball;
@@ -155,7 +155,7 @@ private int x=0;
                 if (!checkCollision(movingBallArrayList.get(i))) {
                     movingBallArrayList.get(i).setVelocity(velocity);
                     movingBallArrayList.get(i).move();
-                }
+                }else{ y=1;}
                 movingBallArrayList.get(i).draw(canvas);
             }
           //  displayFps(canvas, avgFPS);
@@ -203,9 +203,9 @@ private int x=0;
             //ball.draw(canvas);
             //System.out.println(getWidth());
             MillisecondTime = SystemClock.uptimeMillis() - StartTime;
-
-            UpdateTime = TimeBuff + MillisecondTime;
-
+            if(y==0) {
+                UpdateTime = TimeBuff + MillisecondTime;
+            }
             Seconds = (int) (UpdateTime / 1000);
 
             if(Seconds/5-x!=0)velocity = velocity+1;
