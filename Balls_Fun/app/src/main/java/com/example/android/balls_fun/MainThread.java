@@ -90,9 +90,14 @@ public class MainThread extends Thread {
                     // render state to the screen
                     // draws the canvas on the panel
                     this.gamePanel.render(canvas);
+<<<<<<< HEAD
                     //*****************************************//
                     this.gamePanel.currentTime(canvas);
                     //******************************************//
+=======
+                    this.gamePanel.currentTime(canvas);
+                    this.gamePanel.showGameOver(canvas);
+>>>>>>> a7404a29c3f76f8abd476647527dce47f36db566
                     // calculate how long did the cycle take
                     timeDiff = System.currentTimeMillis() - beginTime;
                     // calculate sleep time
